@@ -35,3 +35,14 @@ ActiveRecord::Schema.define(version: 20160412184216) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end
+
+ActiveRecord::Schema.define(version: 20160412163531) do
+
+  create_table "games", force: :cascade do |t|
+    t.text     "board",      limit: 65535
+    t.integer  "shots",      limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+end
