@@ -1,0 +1,15 @@
+.show.container
+  .row
+    .col-md-6.col-md-offset-3
+      %h1= "Battleship Game: #{@game.id}"
+
+  .row
+    %h3= "Shots: #{@game.shots}"
+
+  .row
+    .col-md-offset-2
+      - @game.board.each do |row|
+        .row
+          - row.each do |cell|
+            .col-md-1
+              %p= cell.get_coordinates

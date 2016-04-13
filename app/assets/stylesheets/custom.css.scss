@@ -1,0 +1,19 @@
+// "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+h1 {
+ text-align: center;
+ font-size: 50px;
+}
+
+.start_link {
+  text-align: center;
+  a {
+    width: 200px;
+  }
+}
+
+.container {
+  text-align: center;
+}

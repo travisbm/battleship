@@ -1,10 +1,15 @@
 source 'https://rubygems.org'
-
+gem 'pry-rails'
+# Use haml instead of erb
+gem 'haml', '~> 4.0.5'
+# Use devise for user authentication
 gem 'devise'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.6'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.3.13', '< 0.5'
+# Use Bootstrap for styling
+gem 'bootstrap-sass', '~> 3.3.6'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -22,6 +27,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
+  gem 'factory_girl_rails'
 end
 
 group :development do
@@ -34,4 +40,3 @@ end
 
 group :test do
 end
-
