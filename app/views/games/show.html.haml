@@ -6,10 +6,10 @@
   .row
     %h3= "Shots: #{@game.shots}"
 
-  .row
-    .col-md-offset-2
-      - @game.board.each do |row|
+    .row
+      .col-md-8.col-md-offset-2
         .row
-          - row.each do |cell|
-            .col-md-1
-              %p= cell.status
+          - @game.cells.each do |cell|
+            .col-md-1-2
+              %p.game_cell
+                = cell.status

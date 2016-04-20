@@ -1,17 +1,8 @@
-class Cell
-  attr_accessor :row, :column, :status
+class Cell < ActiveRecord::Base
+  before_create :init
+  belongs_to :game
 
-  def initialize(row = nil, column = nil)
-    @row = row
-    @column = column
-    @status = 0
+  def init
+    self.status = Game::OPEN
   end
-
-  # Returns formatted coordinates
-  #
-  # @return [String]
-  def get_coordinates
-    "(#{row}, #{column})"
-  end
-
 end

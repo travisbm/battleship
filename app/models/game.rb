@@ -1,126 +1,118 @@
 class Game < ActiveRecord::Base
-  serialize :board, Array
-  before_create :set_board, :set_shots
+  after_create  :build_game_cells, :set_ships, :set_shots
+
+  has_many :cells
 
   ARRAY_SIZE    = 10
   NUM_SHOTS     = 50
-  CARRIER_SIZE  = 5
   CARRIER_COUNT = 2
-  VESSEL_SIZE   = 3
   VESSEL_COUNT  = 3
-  BOAT_SIZE     = 1
   BOAT_COUNT    = 5
-
-  # Return a random empty cell
-  #
-  # @param [Integer] count
-  #
-  # @return [Cell]
-  # @return [String]
-  def random_cell(count = 0)
-    cnt = count
-    cell = self.board[rand(0..9)][rand(0..9)]
-
-    if cell.status == 0
-      cell
-    elsif cnt == 100
-      return "No empty cells"
-    else
-      cnt += 1
-      random_cell(cnt)
-    end
-  end
+  OPEN          = "open"
 
   # Place ships on the game board
   #
-  # @param [Integer] ship_size
-  def place_ship(ship_size)
-    cell = random_cell
+  # @param [Ship] ship
+  def place_ship(ship)
+    cell      = random_cell
+    size      = ship.size - 1
+    row       = cell.row
+    column    = cell.column
     direction = [:left, :right, :up, :down].sample
-
-    return cell.status = BOAT_SIZE if ship_size.equal?(BOAT_SIZE)
 
     case direction
     when :left
-      negative_edge(cell, ship_size, self.board)
+      range = self.cells.where(row: row).where(column: negative_range(column, size))
+      edge  = fits_negative_edge?(column, size)
     when :right
-      positive_edge(cell, ship_size, self.board)
+      range = self.cells.where(row: row).where(column: positive_range(column, size))
+      edge  = fits_positive_edge?(column, size)
     when :up
-      negative_edge(cell, ship_size, self.board.transpose)
+      range = self.cells.where(column: column).where(row: negative_range(row, size))
+      edge  = fits_negative_edge?(row, size)
     when :down
-      positive_edge(cell, ship_size, self.board.transpose)
+      range = self.cells.where(column: column).where(row: positive_range(row, size))
+      edge  = fits_positive_edge?(row, size)
     end
-  end
 
-  # Checks positive edge of board for ship placement
-  #
-  # @param [Cell]    cell
-  # @param [Integer] ship_size
-  # @param [Array]   board
-  def positive_edge(cell, ship_size, board)
-    range      = board[cell.row][cell.column..(cell.column + (ship_size - 1))]
-    right_edge = cell.column + (ship_size - 1) <= ARRAY_SIZE - 1
-
-    set_cell_status(cell, ship_size, right_edge, range)
-  end
-
-  # Checks negative edge of board for ship placement
-  #
-  # @param [Cell]    cell
-  # @param [Integer] ship_size
-  # @param [Array]   board
-  def negative_edge(cell, ship_size, board)
-    range     = board[cell.row][(cell.column - (ship_size - 1))..cell.column]
-    left_edge = cell.column - (ship_size - 1) >= 0
-
-    set_cell_status(cell, ship_size, left_edge, range)
-  end
-
-  # Sets cell status to ship_size
-  #
-  # @param [Cell]    cells
-  # @param [Integer] ship_size
-  # @param [Boolean] edge
-  # @param [Array]   range
-  def set_cell_status(cell, ship_size, edge, range)
-    if (edge) && (range).none? { |cell| cell.status > 0 }
-      range.each do |cell|
-        cell.status = ship_size
-      end
+    if edge && range.all? { |cell| cell.status == OPEN }
+      range.each { |cell| cell.update(status: ship.type) }
     else
-      place_ship(ship_size)
+      place_ship(ship)
     end
   end
 
   private
 
-  # Places ships on board
-  def set_ships
-    CARRIER_COUNT.times do
-      self.place_ship(CARRIER_SIZE)
-    end
+  # Returns true if open cells available
+  #
+  # @return [Boolean]
+  def empty_cell?
+    self.cells.any? { |cell| cell.status == OPEN}
+  end
 
-    VESSEL_COUNT.times do
-      self.place_ship(VESSEL_SIZE)
-    end
+  # Return a random empty cell
+  #
+  # @return [Cell] cell
+  def random_cell
+    raise "No empty game cells..." if !empty_cell?
+    self.cells.sample
+  end
 
-    BOAT_COUNT.times do
-      self.place_ship(BOAT_SIZE)
+  # Returns range for ships being placed in positive direction
+  #
+  # @return [Range]
+  def positive_range(row_or_column, size)
+    row_or_column..(row_or_column + size)
+  end
+
+  # Returns range for ships being placed in negative direction
+  #
+  # @return [Range]
+  def negative_range(row_or_column, size)
+    (row_or_column - size)..row_or_column
+  end
+
+  # Checks if ship fits inside positive edge
+  #
+  # @return [Boolean]
+  def fits_positive_edge?(row_or_column, size)
+    row_or_column + size <= ARRAY_SIZE - 1
+  end
+
+  # Checks if ship fits inside negative edge
+  #
+  # @return [Boolean]
+  def fits_negative_edge?(row_or_column, size)
+    row_or_column - size >= 0
+  end
+
+  # Builds cells to hold game state
+  def build_game_cells
+    ARRAY_SIZE.times do |row|
+      ARRAY_SIZE.times do |column|
+        self.cells.create(row: row, column: column)
+      end
     end
   end
 
-  # Sets game board
-  def set_board
-    self.board = Array.new(ARRAY_SIZE) do |row|
-      Array.new(ARRAY_SIZE) { |column| Cell.new(row, column) }
+  # Places ships on the board
+  def set_ships
+    BOAT_COUNT.times do
+      place_ship(Boat.create)
     end
 
-    set_ships
+    VESSEL_COUNT.times do
+      place_ship(Vessel.create)
+    end
+
+    CARRIER_COUNT.times do
+      self.place_ship(Carrier.create)
+    end
   end
 
   # Sets game shots count
   def set_shots
-    self.shots = NUM_SHOTS
+    self.update(shots: NUM_SHOTS)
   end
-
 end
