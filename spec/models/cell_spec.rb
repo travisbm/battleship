@@ -13,7 +13,7 @@ RSpec.describe Cell do
     end
 
     it "initializes cell status to nil" do
-      expect(cell.status).to eq("open")
+      expect(cell.status).to eq(Game::OPEN)
     end
   end
 end

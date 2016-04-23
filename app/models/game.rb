@@ -1,5 +1,5 @@
 class Game < ActiveRecord::Base
-  after_create  :build_game_cells, :set_ships, :set_shots
+  after_create  :build_game_cells, :set_ships, :set_shots, :set_initial_score
 
   has_many :cells
 
@@ -9,6 +9,8 @@ class Game < ActiveRecord::Base
   VESSEL_COUNT  = 3
   BOAT_COUNT    = 5
   OPEN          = "open"
+  HIT           = "hit"
+  MISS          = "miss"
 
   # Place ships on the game board
   #
@@ -39,6 +41,25 @@ class Game < ActiveRecord::Base
       range.each { |cell| cell.update(status: ship.type, ship: ship) }
     else
       place_ship(ship)
+    end
+  end
+
+  # Updates status of cells fired upon and updates score
+  #
+  # @param [Cell] cell
+  def fire(cell_id)
+    cell   = Cell.find(cell_id)
+    status = cell.status
+
+    case status
+    when OPEN
+      cell.update(status: MISS)
+      self.update(score: (self.score - 50), shots: (self.shots - 1))
+    when "Boat", "Vessel", "Carrier"
+      cell.update(status: HIT)
+      self.update(score: (self.score + 500))
+    else
+      return
     end
   end
 
@@ -114,5 +135,10 @@ class Game < ActiveRecord::Base
   # Sets game shots count
   def set_shots
     self.update(shots: NUM_SHOTS)
+  end
+
+  # Sets initial score to 0
+  def set_initial_score
+    self.update(score: 0)
   end
 end

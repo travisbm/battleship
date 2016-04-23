@@ -13,4 +13,12 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
+  def fire
+    game = Game.find(params[:id])
+
+    game.fire(params[:cell_id])
+
+    redirect_to game_path(game)
+  end
+
 end

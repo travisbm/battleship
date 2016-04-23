@@ -4,6 +4,6 @@ class Cell < ActiveRecord::Base
   belongs_to :ship
 
   def init
-    self.status = Game::OPEN
+    self.status ||= Game::OPEN
   end
 end
