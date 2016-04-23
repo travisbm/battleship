@@ -36,7 +36,7 @@ class Game < ActiveRecord::Base
     end
 
     if edge && range.all? { |cell| cell.status == OPEN }
-      range.each { |cell| cell.update(status: ship.type) }
+      range.each { |cell| cell.update(status: ship.type, ship: ship) }
     else
       place_ship(ship)
     end

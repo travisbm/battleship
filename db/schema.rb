@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160425142435) do
+ActiveRecord::Schema.define(version: 20160426155355) do
 
   create_table "cells", force: :cascade do |t|
     t.integer  "game_id",    limit: 4
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20160425142435) do
     t.string   "status",     limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.integer  "ship_id",    limit: 4
   end
 
   add_index "cells", ["game_id"], name: "index_cells_on_game_id", using: :btree
