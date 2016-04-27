@@ -1,5 +1,6 @@
 class Game < ActiveRecord::Base
-  after_create  :build_game_cells, :set_ships, :set_shots, :set_initial_score
+  before_create :init
+  after_create  :build_game_cells, :set_ships
 
   has_many :cells
 
@@ -53,13 +54,13 @@ class Game < ActiveRecord::Base
 
     case status
     when OPEN
-      cell.update(status: MISS)
-      self.update(score: (self.score - 50), shots: (self.shots - 1))
+      update_game_when_miss(cell)
+      set_game_final_score if game_over?
     when "Boat", "Vessel", "Carrier"
-      cell.update(status: HIT)
-      self.update(score: (self.score + 500))
+      update_game_when_hit(cell)
+      set_game_final_score if game_over?
     else
-      return
+      raise "Invalid Cell status..."
     end
   end
 
@@ -70,13 +71,41 @@ class Game < ActiveRecord::Base
     (self.score / (Time.now - self.created_at)).floor
   end
 
+  # Returns true if player is out of shots
+  #
+  # @return [Boolean]
+  def game_over?
+    self.shots <= 0 || self.cells.where.not(ship_id: nil).none?
+  end
+
   private
+
+  # Updates game stats when shot is a MISS
+  #
+  # @param [Cell] cell
+  def update_game_when_miss(cell)
+    cell.update(status: MISS)
+    self.update(score: (self.score - 50), shots: (self.shots - 1))
+  end
+
+  # Updates game stats when shot is a HIT
+  #
+  # @param [Cell] cell
+  def update_game_when_hit(cell)
+    cell.update(status: HIT, ship_id: nil)
+    self.update(score: (self.score + 500))
+  end
+
+  # Sets final score for game
+  def set_game_final_score
+    self.update(score: self.final_score)
+  end
 
   # Returns true if open cells available
   #
   # @return [Boolean]
   def empty_cell?
-    self.cells.any? { |cell| cell.status == OPEN}
+    self.cells.where(status: OPEN).any?
   end
 
   # Return a random empty cell
@@ -135,17 +164,13 @@ class Game < ActiveRecord::Base
     end
 
     CARRIER_COUNT.times do
-      self.place_ship(Carrier.create)
+      place_ship(Carrier.create)
     end
   end
 
-  # Sets game shots count
-  def set_shots
-    self.update(shots: NUM_SHOTS)
-  end
-
-  # Sets initial score to 0
-  def set_initial_score
-    self.update(score: 0)
+  # Initializes game stats
+  def init
+    self.shots ||= NUM_SHOTS
+    self.score ||= 0
   end
 end

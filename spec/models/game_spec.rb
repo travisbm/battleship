@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Game, type: :model do
-  let(:game)       {create(:game)}
-  let(:game_score) {create(:game, :score)}
-  let(:cell)       {create(:cell)}
-  let(:cell_ship)  {create(:cell, :ship)}
+  let(:game)          {create(:game)}
+  let(:game_score)    {create(:game, :score_no_shots)}
+  let(:cell)          {create(:cell)}
+  let(:cell_ship)     {create(:cell, :ship)}
 
   describe ".create" do
     it "sets a shot count" do
@@ -71,6 +71,21 @@ RSpec.describe Game, type: :model do
       allow(Time).to receive(:now).and_return(game_score.created_at + 180)
 
       expect(game_score.final_score).to eq(60)
+    end
+  end
+
+  describe "#game_over?" do
+    it "returns TRUE if shots <= 0 with ships on the board" do
+      expect(game_score.game_over?).to be(true)
+    end
+
+    it "returns TRUE if all ships HIT with shots left" do
+      game.cells.update_all(ship_id: nil)
+      expect(game.game_over?).to be(true)
+    end
+
+    it "returns FALSE if shots > 0 AND there are ships on the board" do
+      expect(game.game_over?).to be(false)
     end
   end
 end

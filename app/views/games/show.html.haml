@@ -12,4 +12,4 @@
           - @game.cells.each do |cell|
             .col-md-1-2
               %p.game_cell
-                = link_to cell.status, fire_game_path(cell_id: cell.id), class: 'btn'
+                = link_to cell.status, fire_game_path(cell_id: cell.id), method: :put, class: 'btn'
