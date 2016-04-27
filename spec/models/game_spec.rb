@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Game, type: :model do
-  let(:game)      {create(:game)}
-  let(:cell)      {create(:cell, game: game)}
-  let(:cell_ship) {create(:cell, :ship)}
+  let(:game)       {create(:game)}
+  let(:game_score) {create(:game, :score)}
+  let(:cell)       {create(:cell)}
+  let(:cell_ship)  {create(:cell, :ship)}
 
   describe ".create" do
     it "sets a shot count" do
@@ -19,7 +20,7 @@ RSpec.describe Game, type: :model do
     end
 
     it "sets 5 boats on game board" do
-        expect(game.cells.where(status: "boat").count).to eq(Game::BOAT_COUNT * Boat::SIZE)
+      expect(game.cells.where(status: "boat").count).to eq(Game::BOAT_COUNT * Boat::SIZE)
     end
 
     it "sets 3 vessels on game board" do
@@ -62,6 +63,14 @@ RSpec.describe Game, type: :model do
       expect{
         game.fire(cell_ship.id)
       }.to change(game, :score).by (500)
+    end
+  end
+
+  describe "#final_score" do
+    it "returns final calculated score" do
+      allow(Time).to receive(:now).and_return(game_score.created_at + 180)
+
+      expect(game_score.final_score).to eq(60)
     end
   end
 end

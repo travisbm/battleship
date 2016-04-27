@@ -63,6 +63,13 @@ class Game < ActiveRecord::Base
     end
   end
 
+  # Returns final score
+  #
+  # @return [Integer]
+  def final_score
+    (self.score / (Time.now - self.created_at)).floor
+  end
+
   private
 
   # Returns true if open cells available
