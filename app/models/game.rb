@@ -71,7 +71,7 @@ class Game < ActiveRecord::Base
     (self.score / (Time.now - self.created_at)).floor
   end
 
-  # Returns true if player is out of shots
+  # Returns true if player is out of shots or all ships are sunk
   #
   # @return [Boolean]
   def game_over?
