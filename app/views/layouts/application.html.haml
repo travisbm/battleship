@@ -7,6 +7,15 @@
   = csrf_meta_tags
 %body
 
+.nav.navbar.navbar-default
+  .container-fluid
+    .navbar-header
+      %a.navbar-brand Battleship
+    %ul.nav.navbar-nav.navbar-right
+      %li
+        - if user_signed_in?
+          %a.navbar-link Log Out
+
 %p.notice
   = notice
 %p.alert
