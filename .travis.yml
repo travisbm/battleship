@@ -4,3 +4,7 @@ rvm:
  - jruby
  - rbx-2
 script: bundle exec rspec spec
+env:
+  SECRET_KEY_BASE="$(bundle exec rake secret)"
+before_script:
+  - mysql -e 'create database battleship_test;'
