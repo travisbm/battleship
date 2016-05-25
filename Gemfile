@@ -1,6 +1,4 @@
 source 'https://rubygems.org'
-gem 'angularjs-rails', '~> 1.5'
-
 gem 'pry-rails'
 # Use haml instead of erb
 gem 'haml', '~> 4.0.5'

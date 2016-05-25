@@ -1,10 +1,8 @@
 language: ruby
 rvm:
- - 2.2
- - jruby
- - rbx-2
-script: bundle exec rspec spec
-env:
-  SECRET_KEY_BASE="$(bundle exec rake secret)"
+- 2.2
 before_script:
-  - mysql -e 'create database battleship_test;'
+- mysql -e 'create database battleship_test;'
+env:
+  global:
+    secure: vCiZppdkzBK/b32knJWT1EQaiNsrSXIwu6MvOqReQ0yWJTq6n30RmAyF24pgoMdL7gf0HCRWXdX97Bfv6k0SSeT4Tbc1QLUgtz4UvVeveSwgnPfUXpSM3boIBuidCKV95bh+K6iQEsIxlbBBR9oi5eAv9AMssX5t9s5ONdUxyIECsbrvoxcv/FVYcOknN5Ei8I4wRzE6k+NWocGl/ocCy6No/EwEn4/DkghW75y0wHhUtLk+0bwu8677x1MlHcE/WDGFJ+5wTC6haQ0KNC6dl7kCGmLNW4xQ2Ar1890BwY3uePVBHW6eH7iGgUYlS+XLBhdcBa+I+pWz2Wm7vW25WaDgDGrbbvOpXVWAPf73H+aw2P9dYHauRkNW2bomUCb5dZ1uNVjpwHqCChWdbKrD1ziEfuyvXRjjAE7hLOiAyopSIDRR+jqXFBAFvsgvC9/nui6fEr67+SYOB6DN3U/GtB7SVXT811hkNw2D8o0tqtvLEubQJQHLN5wU2/H3G6rcrbA5pf4Yw7AYAqHha9ZmJMqq3O48lzDRwXzabhWaiYqHz50iRHyuyFzoxCu0yzKilNRjLcOiaZkQeVoBeSfeEILaFY3xuUbQq3wzZETilMEU2EJY8h+UPAy38KGW/RoTprciBTsD9SaFtwsuaWWASKn82dgKInTRjVi0RB+Wkxw=
