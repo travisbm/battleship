@@ -1,4 +1,4 @@
-== README
+== Battleship {<img src="https://travis-ci.org/travisbm/battleship.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/travisbm/battleship]
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
