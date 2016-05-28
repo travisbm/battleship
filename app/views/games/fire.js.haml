@@ -1,0 +1,6 @@
+$('.score').html("Shots: #{@game.shots} Score: #{@game.score}");
+
+- if @cell.status == 'hit'
+  $('.#{@cell.id}').css("background", "red")
+- elsif @cell.status == 'miss'
+  $('.#{@cell.id}').css("background", "grey")

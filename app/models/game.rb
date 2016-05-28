@@ -12,6 +12,10 @@ class Game < ActiveRecord::Base
   OPEN          = "open"
   HIT           = "hit"
   MISS          = "miss"
+  BOAT          = "Boat"
+  VESSEL        = "Vessel"
+  CARRIER       = "Carrier"
+  SHIPS_ARRAY   = [BOAT, VESSEL, CARRIER]
 
   # Place ships on the game board
   #
@@ -56,11 +60,11 @@ class Game < ActiveRecord::Base
     when OPEN
       update_game_when_miss(cell)
       set_game_final_score if game_over?
-    when "Boat", "Vessel", "Carrier"
+    when *SHIPS_ARRAY
       update_game_when_hit(cell)
       set_game_final_score if game_over?
-    else
-      raise "Invalid Cell status..."
+    # else
+    #   raise "Invalid Cell status..."
     end
   end
 

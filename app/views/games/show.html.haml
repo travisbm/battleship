@@ -1,15 +1,28 @@
 .show.container
+  :css
+    #cell {
+    float: left;
+    position: relative;
+    width: 10%;
+    padding-top: 10%;
+    background: blue;
+    border: 1px solid white}
+
+    .game_board {
+    margin-bottom: 100px;
+    }
+
   .row
     .col-md-6.col-md-offset-3
       %h1= "Battleship Game: #{@game.id}"
 
   .row
-    %h3= "Shots: #{@game.shots} Score: #{@game.score}"
+    %h3.score= "Shots: #{@game.shots} Score: #{@game.score}"
 
-    .row
-      .col-md-8.col-md-offset-2
+  .row.game_board
+    .col-md-6.col-md-offset-3
+      - @game.cells.in_groups_of(10, false).each do |group|
         .row
-          - @game.cells.each do |cell|
-            .col-md-1-2
-              %p.game_cell
-                = link_to cell.status, fire_game_path(cell_id: cell.id), method: :put, class: 'btn'
+          - group.each do |cell|
+            = link_to fire_game_path(cell_id: cell.id), method: :put, remote: true do
+              #cell{:class => "#{cell.id}"}

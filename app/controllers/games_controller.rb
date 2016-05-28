@@ -1,4 +1,5 @@
 class GamesController < ApplicationController
+  respond_to :html, :json, :js
 
   def new
   end
@@ -14,19 +15,25 @@ class GamesController < ApplicationController
   end
 
   def fire
-    game = Game.find(params[:id])
+    @game = Game.find(params[:id])
 
-    begin
-      game.fire(params[:cell_id])
-    rescue
-      flash[:notice] = "Invalid Cell Status."
+    @game.fire(params[:cell_id])
+    @cell = Cell.find(params[:cell_id])
+
+    respond_to do |format|
+      format.html {redirect_to :game}
+      format.js
     end
 
-    if game.game_over?
-      redirect_to new_user_session_path
-    else
-      redirect_to game_path(game)
-    end
+    # begin
+    #   game.fire(params[:cell_id])
+    # rescue
+    #   flash[:notice] = "Invalid Cell Status."
+    # end
+    #
+    # redirect_to new_user_session_path and return if game.game_over?
+    #
+    # redirect_to game_path(game)
   end
 
 end
